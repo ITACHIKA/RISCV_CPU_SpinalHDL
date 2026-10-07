@@ -1,0 +1,13 @@
+/target/
+/project/.bloop/
+/project/target/
+/project/project/
+/generated/
+/simWorkspace/
+/.bsp/
+/.metals/
+/.scala-build/
+/.bloop/
+*.vcd
+*.fst
+.vscode
