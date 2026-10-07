@@ -13,7 +13,6 @@ Standalone sbt project for the migrated five-stage RV32I CPU, SoC, and Cmod A7 t
 Run from WSL:
 
 ```sh
-cd /mnt/e/ITACHIKA/FPGA/cpu/RISCV_SpinalHDL
 sbt compile
 sbt 'runMain riscv.Generate cpu generated/cpu'
 sbt 'runMain riscv.Generate soc generated/soc --no-image'
