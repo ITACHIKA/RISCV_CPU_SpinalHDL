@@ -30,7 +30,7 @@ class execute_stage_ex extends Component {
   val redirect_pc_request_ex = Bool()
   val redirect_next_pc_ex = UInt(32 bits)
   val btb_target_pc_ex = UInt(32 bits)
-  val btb_update_type_ex = UInt(2 bits)
+  val btb_update_type_ex = BranchPredictType()
   val btb_update_valid_ex = Bool()
   val btb_actual_taken_ex = Bool()
   val comparator = new comparator_ex
@@ -84,13 +84,13 @@ class execute_stage_ex extends Component {
   btb_actual_taken_ex := control_flow_resolver.io.btb_actual_taken
   
   mem_forward_result_ex := ex_mem_reg_q.forward_data
-  def forward(sel: UInt, original: UInt): UInt = {
+  def forward(sel: SpinalEnumCraft[RsForwardSel.type], original: UInt): UInt = {
     val value = UInt(32 bits)
     value := 0
     switch(sel) {
-      is(RS_FORWARD_NONE) { value := original }
-      is(RS_FORWARD_MEM) { value := mem_forward_result_ex }
-      is(RS_FORWARD_WB) { value := wb_data_wb }
+      is(RsForwardSel.NONE) { value := original }
+      is(RsForwardSel.MEM) { value := mem_forward_result_ex }
+      is(RsForwardSel.WB) { value := wb_data_wb }
     }
     value
   }
@@ -98,15 +98,15 @@ class execute_stage_ex extends Component {
   rs2_forward_result_ex := forward(id_ex_reg_q.rs2_forward_mux_sel, id_ex_reg_q.rs2_data)
   alu_a_ex := 0
   switch(id_ex_reg_q.alu_src_a_sel) {
-    is(ALU_SRC_A_RS1) { alu_a_ex := rs1_forward_result_ex }
-    is(ALU_SRC_A_PC) { alu_a_ex := id_ex_reg_q.pc }
+    is(AluSrcA.RS1) { alu_a_ex := rs1_forward_result_ex }
+    is(AluSrcA.PC) { alu_a_ex := id_ex_reg_q.pc }
   }
   alu_b_ex := 0
   switch(id_ex_reg_q.alu_src_b_sel) {
-    is(ALU_SRC_B_RS2) { alu_b_ex := rs2_forward_result_ex }
-    is(ALU_SRC_B_IMM) { alu_b_ex := id_ex_reg_q.imm }
+    is(AluSrcB.RS2) { alu_b_ex := rs2_forward_result_ex }
+    is(AluSrcB.IMM) { alu_b_ex := id_ex_reg_q.imm }
   }
-  ex_mem_reg_d.forward_data := Mux(id_ex_reg_q.wb_sel === WB_PC, id_ex_reg_q.pcplus4, alu_result_ex)
+  ex_mem_reg_d.forward_data := Mux(id_ex_reg_q.wb_sel === WbSel.PC, id_ex_reg_q.pcplus4, alu_result_ex)
   ex_mem_reg_d.pc := id_ex_reg_q.pc
   ex_mem_reg_d.pcplus4 := id_ex_reg_q.pcplus4
   ex_mem_reg_d.alu_result := alu_result_ex

@@ -51,9 +51,9 @@ class riscv_soc(bootImage: Option[String] = Some("bootloader.mem")) extends Comp
     val uart_rdata_wb = UInt(32 bits)
     val timer_rdata_wb = UInt(32 bits)
     val sysctrl_rdata_wb = UInt(32 bits)
-    val mmio_wb_sel_wb = UInt(3 bits)
+    val mmio_wb_sel_wb = MmioWbSel()
     val reset_vector = UInt(32 bits)
-    val bootmode = UInt(1 bits)
+    val bootmode = BootMode()
     val core = new riscv_cpu
     core.setName("core")
     // Inputs
@@ -189,13 +189,13 @@ class riscv_soc(bootImage: Option[String] = Some("bootloader.mem")) extends Comp
     
     data_resp_rdata_wb := 0
     switch(mmio_wb_sel_wb) {
-      is(MMIO_WB_SEL_IMEM) { data_resp_rdata_wb := imem_rdata_wb }
-      is(MMIO_WB_SEL_DMEM) { data_resp_rdata_wb := dmem_rdata_wb }
-      is(MMIO_WB_SEL_GPIO) { data_resp_rdata_wb := gpio_rdata_wb }
-      is(MMIO_WB_SEL_UART) { data_resp_rdata_wb := uart_rdata_wb }
-      is(MMIO_WB_SEL_TIMER) { data_resp_rdata_wb := timer_rdata_wb }
-      is(MMIO_WB_SEL_SYSCTRL) { data_resp_rdata_wb := sysctrl_rdata_wb }
+      is(MmioWbSel.IMEM) { data_resp_rdata_wb := imem_rdata_wb }
+      is(MmioWbSel.DMEM) { data_resp_rdata_wb := dmem_rdata_wb }
+      is(MmioWbSel.GPIO) { data_resp_rdata_wb := gpio_rdata_wb }
+      is(MmioWbSel.UART) { data_resp_rdata_wb := uart_rdata_wb }
+      is(MmioWbSel.TIMER) { data_resp_rdata_wb := timer_rdata_wb }
+      is(MmioWbSel.SYSCTRL) { data_resp_rdata_wb := sysctrl_rdata_wb }
     }
-    reset_vector := Mux(bootmode === BOOTMODE_DOWNLOAD, U(0,32 bits), U(0x1000,32 bits))
+    reset_vector := Mux(bootmode === BootMode.DOWNLOAD, U(0,32 bits), U(0x1000,32 bits))
   }
 }

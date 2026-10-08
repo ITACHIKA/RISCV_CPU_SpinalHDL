@@ -41,7 +41,7 @@ class memory_stage_mem extends Component {
   load_misalign_except_mem := lsu_mem.io.load_misalign_except
   store_misalign_except_mem := lsu_mem.io.store_misalign_except
   
-  wb_forward_valid_mem := ex_mem_reg_q.valid && ex_mem_reg_q.reg_we && (ex_mem_reg_q.wb_sel =/= WB_MEM)
+  wb_forward_valid_mem := ex_mem_reg_q.valid && ex_mem_reg_q.reg_we && (ex_mem_reg_q.wb_sel =/= WbSel.MEM)
   mem_read_mem := ex_mem_reg_q.mem_re && ex_mem_reg_q.valid
   mem_write_mem := ex_mem_reg_q.mem_we && ex_mem_reg_q.valid
   data_req_valid_mem := mem_read_mem || mem_write_mem

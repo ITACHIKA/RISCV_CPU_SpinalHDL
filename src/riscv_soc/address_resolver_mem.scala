@@ -15,7 +15,7 @@ class address_resolver_mem extends Component {
     val mmio_device_wren = in(Bool())
     val mmio_device_rden = in(Bool())
     // Outputs
-    val mmio_wb_sel = out(UInt(3 bits))
+    val mmio_wb_sel = out(MmioWbSel())
     val dmem_resolved_wren = out(Bool())
     val dmem_resolved_rden = out(Bool())
     val imem_resolved_rden = out(Bool())
@@ -48,16 +48,16 @@ class address_resolver_mem extends Component {
     timer_resolved_rden := read && window(0x10002000L,0x10003000L)
     sysctrl_resolved_wren := write && window(0x1000f000L,0x10010000L)
     sysctrl_resolved_rden := read && window(0x1000f000L,0x10010000L)
-    val selected = Reg(UInt(3 bits))
+    val selected = Reg(MmioWbSel())
     mmio_wb_sel := selected
-    when(!reset_n) { selected := MMIO_WB_SEL_NONE }.otherwise {
-      selected := MMIO_WB_SEL_NONE
-      when(imem_resolved_rden) { selected := MMIO_WB_SEL_IMEM }
-      .elsewhen(dmem_resolved_rden) { selected := MMIO_WB_SEL_DMEM }
-      .elsewhen(gpio_resolved_rden) { selected := MMIO_WB_SEL_GPIO }
-      .elsewhen(uart_resolved_rden) { selected := MMIO_WB_SEL_UART }
-      .elsewhen(timer_resolved_rden) { selected := MMIO_WB_SEL_TIMER }
-      .elsewhen(sysctrl_resolved_rden) { selected := MMIO_WB_SEL_SYSCTRL }
+    when(!reset_n) { selected := MmioWbSel.NONE }.otherwise {
+      selected := MmioWbSel.NONE
+      when(imem_resolved_rden) { selected := MmioWbSel.IMEM }
+      .elsewhen(dmem_resolved_rden) { selected := MmioWbSel.DMEM }
+      .elsewhen(gpio_resolved_rden) { selected := MmioWbSel.GPIO }
+      .elsewhen(uart_resolved_rden) { selected := MmioWbSel.UART }
+      .elsewhen(timer_resolved_rden) { selected := MmioWbSel.TIMER }
+      .elsewhen(sysctrl_resolved_rden) { selected := MmioWbSel.SYSCTRL }
     }
   }
 }

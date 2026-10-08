@@ -32,15 +32,15 @@ class hazard extends Component {
     val valid_mem = in(Bool())
     val valid_wb = in(Bool())
     // Outputs
-    val rs1_forward_mux_sel = out(UInt(2 bits))
-    val rs2_forward_mux_sel = out(UInt(2 bits))
+    val rs1_forward_mux_sel = out(RsForwardSel())
+    val rs2_forward_mux_sel = out(RsForwardSel())
     val load_use_stall_if = out(Bool())
   }
   noIoPrefix()
   import io._
   val mem_forward_valid = valid_ex && reg_we_ex && !mem_rden_ex && rd_ex =/= 0
-  def select(rs: UInt): UInt = Mux(mem_forward_valid && rs === rd_ex, RS_FORWARD_MEM,
-    Mux(wb_forward_valid_mem && rd_mem =/= 0 && rs === rd_mem, RS_FORWARD_WB, RS_FORWARD_NONE))
+  def select(rs: UInt): SpinalEnumCraft[RsForwardSel.type] = Mux(mem_forward_valid && rs === rd_ex, RsForwardSel.MEM,
+    Mux(wb_forward_valid_mem && rd_mem =/= 0 && rs === rd_mem, RsForwardSel.WB, RsForwardSel.NONE))
   rs1_forward_mux_sel := select(rs1_id)
   rs2_forward_mux_sel := select(rs2_id)
   def dependency(rd: UInt): Bool = rd =/= 0 && ((uses_rs1_id && rs1_id === rd) || (uses_rs2_id && rs2_id === rd))

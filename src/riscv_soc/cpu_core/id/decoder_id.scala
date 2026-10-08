@@ -12,7 +12,7 @@ class decoder_id extends Component {
     val instruction = in(UInt(32 bits))
     // Outputs
     val opcode = out(UInt(7 bits))
-    val imm_type = out(UInt(3 bits))
+    val imm_type = out(ImmType())
     val funct3 = out(UInt(3 bits))
     val funct7 = out(UInt(7 bits))
     val rs1 = out(UInt(5 bits))
@@ -27,12 +27,12 @@ class decoder_id extends Component {
   rs1 := instruction(19 downto 15)
   rs2 := instruction(24 downto 20)
   rd := instruction(11 downto 7)
-  imm_type := IMM_NONE
+  imm_type := ImmType.NONE
   switch(opcode) {
-    is(OPCODE_LOAD, OPCODE_OP_IMM, OPCODE_JALR) { imm_type := IMM_I }
-    is(OPCODE_STORE) { imm_type := IMM_S }
-    is(OPCODE_BRANCH) { imm_type := IMM_B }
-    is(OPCODE_JAL) { imm_type := IMM_J }
-    is(OPCODE_LUI, OPCODE_AUIPC) { imm_type := IMM_U }
+    is(OPCODE_LOAD, OPCODE_OP_IMM, OPCODE_JALR) { imm_type := ImmType.I }
+    is(OPCODE_STORE) { imm_type := ImmType.S }
+    is(OPCODE_BRANCH) { imm_type := ImmType.B }
+    is(OPCODE_JAL) { imm_type := ImmType.J }
+    is(OPCODE_LUI, OPCODE_AUIPC) { imm_type := ImmType.U }
   }
 }

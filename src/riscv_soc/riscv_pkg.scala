@@ -1,6 +1,7 @@
 package riscv
 
 import spinal.core._
+import riscv.RiscvPkg._
 
 // Encodings and payload widths match the original SystemVerilog package.
 object RiscvPkg {
@@ -10,111 +11,130 @@ object RiscvPkg {
   val BTB_ENTRIES = 8
   val BHT_BITS = 5
   val BHT_ENTRIES = 32
-  def IMM_NONE = U(0, 3 bits)
-  def IMM_I = U(1, 3 bits)
-  def IMM_S = U(2, 3 bits)
-  def IMM_B = U(3, 3 bits)
-  def IMM_U = U(4, 3 bits)
-  def IMM_J = U(5, 3 bits)
-  def WB_ALU = U(0, 3 bits)
-  def WB_MEM = U(1, 3 bits)
-  def WB_PC = U(2, 3 bits)
-  def PC_NEXT = U(0, 3 bits)
-  def PC_BRANCH = U(1, 3 bits)
-  def PC_JAL = U(2, 3 bits)
-  def PC_JALR = U(3, 3 bits)
-  def PC_TRAP = U(4, 3 bits)
-  def MEM_BYTE = U(0, 3 bits)
-  def MEM_HALF = U(1, 3 bits)
-  def MEM_WORD = U(2, 3 bits)
-  def MEM_UNSIGNED = U(0, 1 bits)
-  def MEM_SIGNED = U(1, 1 bits)
-  def ALU_ADD = U(0, 4 bits)
-  def ALU_SUB = U(1, 4 bits)
-  def ALU_XOR = U(2, 4 bits)
-  def ALU_OR = U(3, 4 bits)
-  def ALU_AND = U(4, 4 bits)
-  def ALU_SLL = U(5, 4 bits)
-  def ALU_SRL = U(6, 4 bits)
-  def ALU_SRA = U(7, 4 bits)
-  def ALU_SLT = U(8, 4 bits)
-  def ALU_SLTU = U(9, 4 bits)
-  def ALU_COPY_B = U(10, 4 bits)
-  def ALU_INVALID = U(11, 4 bits)
-  def ALU_SRC_A_RS1 = U(0, 2 bits)
-  def ALU_SRC_A_PC = U(1, 2 bits)
-  def ALU_SRC_B_RS2 = U(0, 2 bits)
-  def ALU_SRC_B_IMM = U(1, 2 bits)
-  def BP_NONE = U(0, 2 bits)
-  def BP_CONDITIONAL = U(1, 2 bits)
-  def BP_JAL = U(2, 2 bits)
-  def RS_FORWARD_NONE = U(0, 2 bits)
-  def RS_FORWARD_MEM = U(1, 2 bits)
-  def RS_FORWARD_WB = U(2, 2 bits)
-  def MMIO_WB_SEL_NONE = U(0, 3 bits)
-  def MMIO_WB_SEL_IMEM = U(1, 3 bits)
-  def MMIO_WB_SEL_DMEM = U(2, 3 bits)
-  def MMIO_WB_SEL_GPIO = U(3, 3 bits)
-  def MMIO_WB_SEL_UART = U(4, 3 bits)
-  def MMIO_WB_SEL_TIMER = U(5, 3 bits)
-  def MMIO_WB_SEL_SYSCTRL = U(6, 3 bits)
-  def BOOTMODE_DOWNLOAD = U(0, 1 bits)
-  def BOOTMODE_NORMAL = U(1, 1 bits)
-  def OPCODE_LOAD = U(3, 7 bits)
-  def OPCODE_STORE = U(35, 7 bits)
-  def OPCODE_OP = U(51, 7 bits)
-  def OPCODE_OP_IMM = U(19, 7 bits)
-  def OPCODE_AUIPC = U(23, 7 bits)
-  def OPCODE_LUI = U(55, 7 bits)
-  def OPCODE_BRANCH = U(99, 7 bits)
-  def OPCODE_JALR = U(103, 7 bits)
-  def OPCODE_JAL = U(111, 7 bits)
-  def F3_BEQ = U(0, 3 bits)
-  def F3_BNE = U(1, 3 bits)
-  def F3_BLT = U(4, 3 bits)
-  def F3_BGE = U(5, 3 bits)
-  def F3_BLTU = U(6, 3 bits)
-  def F3_BGEU = U(7, 3 bits)
-  def F3_LB = U(0, 3 bits)
-  def F3_LH = U(1, 3 bits)
-  def F3_LW = U(2, 3 bits)
-  def F3_LBU = U(4, 3 bits)
-  def F3_LHU = U(5, 3 bits)
-  def F3_SB = U(0, 3 bits)
-  def F3_SH = U(1, 3 bits)
-  def F3_SW = U(2, 3 bits)
-  def F3_ADDI = U(0, 3 bits)
-  def F3_SLTI = U(2, 3 bits)
-  def F3_SLTIU = U(3, 3 bits)
-  def F3_XORI = U(4, 3 bits)
-  def F3_ORI = U(6, 3 bits)
-  def F3_ANDI = U(7, 3 bits)
-  def F3_SLLI = U(1, 3 bits)
-  def F3_SRLI = U(5, 3 bits)
-  def F3_SRAI = U(5, 3 bits)
-  def F7_SLLI = U(0, 7 bits)
-  def F7_SRLI = U(0, 7 bits)
-  def F7_SRAI = U(32, 7 bits)
-  def F3_ADD = U(0, 3 bits)
-  def F3_SUB = U(0, 3 bits)
-  def F3_SLL = U(1, 3 bits)
-  def F3_SLT = U(2, 3 bits)
-  def F3_SLTU = U(3, 3 bits)
-  def F3_XOR = U(4, 3 bits)
-  def F3_SRL = U(5, 3 bits)
-  def F3_SRA = U(5, 3 bits)
-  def F3_OR = U(6, 3 bits)
-  def F3_AND = U(7, 3 bits)
-  def F7_ADD = U(0, 7 bits)
-  def F7_SUB = U(32, 7 bits)
-  def F7_SLL = U(0, 7 bits)
-  def F7_SLT = U(0, 7 bits)
-  def F7_SLTU = U(0, 7 bits)
-  def F7_XOR = U(0, 7 bits)
-  def F7_SRL = U(0, 7 bits)
-  def F7_SRA = U(32, 7 bits)
-  def F7_OR = U(0, 7 bits)
-  def F7_AND = U(0, 7 bits)
+  // Declaration-order binary codes with the original SV storage widths.
+  // binarySequential alone would shrink WB/MEM-size and ALU-source controls.
+  private def svBinary(width: Int): SpinalEnumEncoding = new SpinalEnumEncoding {
+    setName(s"svBinary$width")
+    override def getWidth(enum: SpinalEnum): Int = {
+      require(binarySequential.getWidth(enum) <= width, "Enum exceeds its SV width")
+      width
+    }
+    override def getValue[T <: SpinalEnum](element: SpinalEnumElement[T]): BigInt =
+      binarySequential.getValue(element)
+    override def getElement[T <: SpinalEnum](value: BigInt, enum: T): SpinalEnumElement[T] =
+      binarySequential.getElement(value, enum)
+  }
+
+  object ImmType extends SpinalEnum(svBinary(3)) {
+    val NONE, I, S, B, U, J = newElement()
+  }
+
+  object WbSel extends SpinalEnum(svBinary(3)) {
+    val ALU, MEM, PC = newElement()
+  }
+
+  object PcSel extends SpinalEnum(svBinary(3)) {
+    val NEXT, BRANCH, JAL, JALR, TRAP = newElement()
+  }
+
+  object MemSize extends SpinalEnum(svBinary(3)) {
+    setName("MemSizeEnum")
+    val BYTE, HALF, WORD = newElement()
+  }
+
+  object MemSign extends SpinalEnum(svBinary(1)) {
+    setName("MemSignEnum")
+    val UNSIGNED, SIGNED = newElement()
+  }
+
+  object AluOp extends SpinalEnum(svBinary(4)) {
+    val ADD, SUB, XOR, OR, AND, SLL = newElement()
+    val SRL, SRA, SLT, SLTU, COPY_B, INVALID = newElement()
+  }
+
+  object AluSrcA extends SpinalEnum(svBinary(2)) {
+    val RS1, PC = newElement()
+  }
+
+  object AluSrcB extends SpinalEnum(svBinary(2)) {
+    val RS2, IMM = newElement()
+  }
+
+  object BranchPredictType extends SpinalEnum(svBinary(2)) {
+    val NONE, CONDITIONAL, JAL = newElement()
+  }
+
+  object RsForwardSel extends SpinalEnum(svBinary(2)) {
+    val NONE, MEM, WB = newElement()
+  }
+
+  object MmioWbSel extends SpinalEnum(svBinary(3)) {
+    val NONE, IMEM, DMEM, GPIO, UART, TIMER = newElement()
+    val SYSCTRL = newElement()
+  }
+
+  object BootMode extends SpinalEnum(svBinary(1)) {
+    // Keep the original "bootmode" port name in case-insensitive backends.
+    setName("BootModeEnum")
+    val DOWNLOAD, NORMAL = newElement()
+  }
+
+  // Instruction bit patterns are encoded ISA fields, not internal control enums.
+  def OPCODE_LOAD = U("7'b0000011")
+  def OPCODE_STORE = U("7'b0100011")
+  def OPCODE_OP = U("7'b0110011")
+  def OPCODE_OP_IMM = U("7'b0010011")
+  def OPCODE_AUIPC = U("7'b0010111")
+  def OPCODE_LUI = U("7'b0110111")
+  def OPCODE_BRANCH = U("7'b1100011")
+  def OPCODE_JALR = U("7'b1100111")
+  def OPCODE_JAL = U("7'b1101111")
+  def F3_BEQ = U("3'b000")
+  def F3_BNE = U("3'b001")
+  def F3_BLT = U("3'b100")
+  def F3_BGE = U("3'b101")
+  def F3_BLTU = U("3'b110")
+  def F3_BGEU = U("3'b111")
+  def F3_LB = U("3'b000")
+  def F3_LH = U("3'b001")
+  def F3_LW = U("3'b010")
+  def F3_LBU = U("3'b100")
+  def F3_LHU = U("3'b101")
+  def F3_SB = U("3'b000")
+  def F3_SH = U("3'b001")
+  def F3_SW = U("3'b010")
+  def F3_ADDI = U("3'b000")
+  def F3_SLTI = U("3'b010")
+  def F3_SLTIU = U("3'b011")
+  def F3_XORI = U("3'b100")
+  def F3_ORI = U("3'b110")
+  def F3_ANDI = U("3'b111")
+  def F3_SLLI = U("3'b001")
+  def F3_SRLI = U("3'b101")
+  def F3_SRAI = U("3'b101")
+  def F7_SLLI = U("7'b0000000")
+  def F7_SRLI = U("7'b0000000")
+  def F7_SRAI = U("7'b0100000")
+  def F3_ADD = U("3'b000")
+  def F3_SUB = U("3'b000")
+  def F3_SLL = U("3'b001")
+  def F3_SLT = U("3'b010")
+  def F3_SLTU = U("3'b011")
+  def F3_XOR = U("3'b100")
+  def F3_SRL = U("3'b101")
+  def F3_SRA = U("3'b101")
+  def F3_OR = U("3'b110")
+  def F3_AND = U("3'b111")
+  def F7_ADD = U("7'b0000000")
+  def F7_SUB = U("7'b0100000")
+  def F7_SLL = U("7'b0000000")
+  def F7_SLT = U("7'b0000000")
+  def F7_SLTU = U("7'b0000000")
+  def F7_XOR = U("7'b0000000")
+  def F7_SRL = U("7'b0000000")
+  def F7_SRA = U("7'b0100000")
+  def F7_OR = U("7'b0000000")
+  def F7_AND = U("7'b0000000")
 }
 
 case class if_id_reg_t() extends Bundle {
@@ -139,20 +159,20 @@ case class id_ex_reg_t() extends Bundle {
   val uses_rs1 = Bool()
   val uses_rs2 = Bool()
   val funct3 = UInt(3 bits)
-  val alu_src_a_sel = UInt(2 bits)
-  val alu_src_b_sel = UInt(2 bits)
-  val alu_op = UInt(4 bits)
+  val alu_src_a_sel = AluSrcA()
+  val alu_src_b_sel = AluSrcB()
+  val alu_op = AluOp()
   val reg_we = Bool()
   val mem_re = Bool()
   val mem_we = Bool()
-  val memsize = UInt(3 bits)
-  val memsign = UInt(1 bits)
-  val wb_sel = UInt(3 bits)
-  val pc_sel = UInt(3 bits)
+  val memsize = MemSize()
+  val memsign = MemSign()
+  val wb_sel = WbSel()
+  val pc_sel = PcSel()
   val predicted_pc = UInt(32 bits)
   val predicted_taken = Bool()
-  val rs1_forward_mux_sel = UInt(2 bits)
-  val rs2_forward_mux_sel = UInt(2 bits)
+  val rs1_forward_mux_sel = RsForwardSel()
+  val rs2_forward_mux_sel = RsForwardSel()
 }
 
 case class ex_mem_reg_t() extends Bundle {
@@ -167,9 +187,9 @@ case class ex_mem_reg_t() extends Bundle {
   val reg_we = Bool()
   val mem_re = Bool()
   val mem_we = Bool()
-  val memsize = UInt(3 bits)
-  val memsign = UInt(1 bits)
-  val wb_sel = UInt(3 bits)
+  val memsize = MemSize()
+  val memsign = MemSign()
+  val wb_sel = WbSel()
   val forward_data = UInt(32 bits)
   val redirect_request = Bool()
   val redirect_request_pc = UInt(32 bits)
@@ -178,7 +198,7 @@ case class ex_mem_reg_t() extends Bundle {
   val actual_taken = Bool()
   val btb_update_valid = Bool()
   val btb_target_pc = UInt(32 bits)
-  val btb_update_type = UInt(2 bits)
+  val btb_update_type = BranchPredictType()
 }
 
 case class mem_wb_reg_t() extends Bundle {
@@ -187,11 +207,11 @@ case class mem_wb_reg_t() extends Bundle {
   val alu_result = UInt(32 bits)
   val rs2_data = UInt(32 bits)
   val rd = UInt(5 bits)
-  val memsize = UInt(3 bits)
-  val memsign = UInt(1 bits)
+  val memsize = MemSize()
+  val memsign = MemSign()
   val mmio_rden = Bool()
   val reg_we = Bool()
-  val wb_sel = UInt(3 bits)
+  val wb_sel = WbSel()
 }
 
 case class pc_predict_result_t() extends Bundle {
@@ -203,7 +223,7 @@ case class btb_entry_t() extends Bundle {
   val valid = Bool()
   val tag = UInt(10 bits)
   val target_pc = UInt(32 bits)
-  val predict_type = UInt(2 bits)
+  val predict_type = BranchPredictType()
 }
 
 case class cpu_perf_t() extends Bundle {

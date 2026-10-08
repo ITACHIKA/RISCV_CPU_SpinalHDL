@@ -34,9 +34,9 @@ class writeback_stage_wb extends Component {
   wb_data_wb := 0
   wb_forward_data_wb := 0
   switch(mem_wb_reg_q.wb_sel) {
-    is(WB_ALU) { wb_data_wb := mem_wb_reg_q.alu_result; wb_forward_data_wb := mem_wb_reg_q.alu_result }
-    is(WB_MEM) { wb_data_wb := load_data_wb }
-    is(WB_PC) { wb_data_wb := mem_wb_reg_q.pcplus4; wb_forward_data_wb := mem_wb_reg_q.pcplus4 }
+    is(WbSel.ALU) { wb_data_wb := mem_wb_reg_q.alu_result; wb_forward_data_wb := mem_wb_reg_q.alu_result }
+    is(WbSel.MEM) { wb_data_wb := load_data_wb }
+    is(WbSel.PC) { wb_data_wb := mem_wb_reg_q.pcplus4; wb_forward_data_wb := mem_wb_reg_q.pcplus4 }
   }
   rd_addr_wb := mem_wb_reg_q.rd
   rd_we_wb := mem_wb_reg_q.reg_we && mem_wb_reg_q.valid

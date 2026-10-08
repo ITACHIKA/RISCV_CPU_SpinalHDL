@@ -10,7 +10,7 @@ class imm_gen_id extends Component {
   val io = new Bundle {
     // Inputs
     val instruction = in(UInt(32 bits))
-    val imm_type = in(UInt(3 bits))
+    val imm_type = in(ImmType())
     // Outputs
     val imm_out = out(UInt(32 bits))
   }
@@ -18,10 +18,10 @@ class imm_gen_id extends Component {
   import io._
   imm_out := 0
   switch(imm_type) {
-    is(IMM_I) { imm_out := instruction(31 downto 20).asSInt.resize(32).asUInt }
-    is(IMM_S) { imm_out := (instruction(31 downto 25) ## instruction(11 downto 7)).asSInt.resize(32).asUInt }
-    is(IMM_B) { imm_out := (instruction(31) ## instruction(7) ## instruction(30 downto 25) ## instruction(11 downto 8) ## False).asSInt.resize(32).asUInt }
-    is(IMM_U) { imm_out := (instruction(31 downto 12) ## U(0,12 bits)).asUInt }
-    is(IMM_J) { imm_out := (instruction(31) ## instruction(19 downto 12) ## instruction(20) ## instruction(30 downto 21) ## False).asSInt.resize(32).asUInt }
+    is(ImmType.I) { imm_out := instruction(31 downto 20).asSInt.resize(32).asUInt }
+    is(ImmType.S) { imm_out := (instruction(31 downto 25) ## instruction(11 downto 7)).asSInt.resize(32).asUInt }
+    is(ImmType.B) { imm_out := (instruction(31) ## instruction(7) ## instruction(30 downto 25) ## instruction(11 downto 8) ## False).asSInt.resize(32).asUInt }
+    is(ImmType.U) { imm_out := (instruction(31 downto 12) ## U(0,12 bits)).asUInt }
+    is(ImmType.J) { imm_out := (instruction(31) ## instruction(19 downto 12) ## instruction(20) ## instruction(30 downto 21) ## False).asSInt.resize(32).asUInt }
   }
 }

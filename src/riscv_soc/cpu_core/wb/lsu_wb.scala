@@ -11,8 +11,8 @@ class lsu_wb extends Component {
     // Inputs
     val mem_raw_data = in(UInt(32 bits))
     val mem_addr = in(UInt(32 bits))
-    val memsize = in(UInt(3 bits))
-    val memsign = in(UInt(1 bits))
+    val memsize = in(MemSize())
+    val memsign = in(MemSign())
     val rden = in(Bool())
     // Outputs
     val load_data = out(UInt(32 bits))
@@ -24,9 +24,9 @@ class lsu_wb extends Component {
   load_data := 0
   when(rden) {
     switch(memsize) {
-      is(MEM_BYTE) { load_data := Mux(memsign === MEM_SIGNED, byte.asSInt.resize(32).asUInt, byte.resize(32)) }
-      is(MEM_HALF) { load_data := Mux(memsign === MEM_SIGNED, half.asSInt.resize(32).asUInt, half.resize(32)) }
-      is(MEM_WORD) { load_data := mem_raw_data }
+      is(MemSize.BYTE) { load_data := Mux(memsign === MemSign.SIGNED, byte.asSInt.resize(32).asUInt, byte.resize(32)) }
+      is(MemSize.HALF) { load_data := Mux(memsign === MemSign.SIGNED, half.asSInt.resize(32).asUInt, half.resize(32)) }
+      is(MemSize.WORD) { load_data := mem_raw_data }
     }
   }
 }

@@ -18,16 +18,16 @@ class system_control extends Component {
     val sysctrl_wstrb = in(UInt(4 bits))
     // Outputs
     val rdata = out(UInt(32 bits))
-    val bootmode = out(UInt(1 bits))
+    val bootmode = out(BootMode())
   }
   noIoPrefix()
   import io._
   val logic = new ClockingArea(ClockDomain(clk, config = ClockDomainConfig(resetKind = BOOT))) {
     // Configuration-time initialization only: external CPU reset must retain boot mode.
-    val bootmode_reg = Reg(UInt(1 bits)) init(0)
+    val bootmode_reg = Reg(BootMode()) init(BootMode.DOWNLOAD)
     bootmode := bootmode_reg
     when(sysctrl_wren && sysctrl_addr === U(0x1000f000L,32 bits)) {
-      bootmode_reg := sysctrl_wdata(0).asUInt
+      bootmode_reg := Mux(sysctrl_wdata(0), BootMode.NORMAL, BootMode.DOWNLOAD)
     }
     // Original RTL leaves this output undriven. Define reserved reads as zero.
     // Preserve original writes, which ignore byte strobes and reset_n.

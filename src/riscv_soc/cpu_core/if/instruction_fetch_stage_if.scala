@@ -22,7 +22,7 @@ class instruction_fetch_stage_if extends Component {
     val btb_feedback_actual_target_mem = in(UInt(32 bits))
     val btb_feedback_taken_mem = in(Bool())
     val btb_feedback_valid_mem = in(Bool())
-    val btb_feedback_predict_type_mem = in(UInt(2 bits))
+    val btb_feedback_predict_type_mem = in(BranchPredictType())
     // Outputs
     val imem_req_valid_if = out(Bool())
     val imem_req_addr_if = out(UInt(32 bits))

@@ -12,20 +12,23 @@ Standalone sbt project for the migrated five-stage RV32I CPU, SoC, and Cmod A7 t
 
 Run from WSL:
 
+Place the real `bootloader.mem` in the project directory first, or pass its external path explicitly. All generation targets containing IMEM require a readable, nonempty image; missing images cause an error before RTL generation.
+
 ```sh
 sbt compile
+sbt run
 sbt 'runMain riscv.Generate cpu generated/cpu'
-sbt 'runMain riscv.Generate soc generated/soc --no-image'
-sbt 'runMain riscv.Generate cmod generated/cmod --no-image'
+sbt 'runMain riscv.Generate soc generated/soc'
+sbt 'runMain riscv.Generate cmod generated/cmod'
 ```
 
-`--no-image` permits hardware elaboration without firmware; it leaves instruction memory uninitialized. For a bootable FPGA build, replace it with the actual external bootloader image:
+`sbt run` defaults to generating Cmod RTL in `generated/cmod`, initialized from `bootloader.mem`. To use an image stored elsewhere:
 
 ```sh
 sbt 'runMain riscv.Generate cmod generated/cmod /absolute/path/to/bootloader.mem'
 ```
 
-The generator accepts `cpu`, `soc`, `cmod`, or `peripherals`, followed by an output directory and an optional image path. If the image argument is omitted, it uses `bootloader.mem` in the working directory. CPU-only generation does not require an image.
+The generator accepts `cpu`, `soc`, `cmod`, or `peripherals`, followed by an output directory and an optional image path. If the image argument is omitted, it uses `bootloader.mem` in the working directory. CPU-only generation does not require an image because the CPU has no internal IMEM. The previous `--no-image` generator option has been removed. Old RTL generated with that option must be regenerated with the real image before FPGA use.
 
 Images use the original word-addressed hexadecimal format, including `@` address directives, as produced by `objcopy --verilog-data-width=4`. Missing locations in a supplied sparse image are initialized to zero. Firmware is supplied externally and is not bundled here.
 
@@ -55,6 +58,8 @@ src/                            Scala source root
 Compilation creates `target/`; generation creates RTL and memory initialization files in the selected output directory. These are build outputs, not source files.
 
 ## FPGA integration and validation
+
+Control signals use native `SpinalEnum` types, including pipeline fields and module ports. For example, `val alu_op = AluOp()` accepts `AluOp.ADD`, while unrelated enum types cannot be assigned to it. The package's fixed-width binary encoding retains the original SV bit widths and declaration-order values. Opcode and funct fields remain raw ISA bit patterns. UART receive states use `UartRxState`.
 
 The CPU and SoC are native SpinalHDL. Cmod clock generation uses the existing Vivado `clk_wiz_0` IP through a Scala BlackBox declaration. A Vivado FPGA build also requires the original Cmod clock-IP configuration, board constraints, and a real bootloader image. Include generated memory initialization files alongside generated RTL and ensure their paths resolve.
 

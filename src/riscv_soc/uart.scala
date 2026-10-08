@@ -4,6 +4,10 @@ import spinal.core._
 import spinal.lib._
 import riscv.RiscvPkg._
 
+object UartRxState extends SpinalEnum(binarySequential) {
+  val IDLE, START_BIT, DATA_BITS, STOP_BIT = newElement()
+}
+
 // Native SpinalHDL implementation of riscv_soc\uart.sv.
 class uart extends Component {
   setDefinitionName("uart")
@@ -136,38 +140,38 @@ class uart extends Component {
     when(reset) { uart_rx_sync1 := True; uart_rx_stable := True }
     .otherwise { uart_rx_sync1 := uart_rx; uart_rx_stable := uart_rx_sync1 }
     // Preserve the original 16-bit RX divider and 32-bit comparison arithmetic.
-    val uart_rx_states = Reg(UInt(2 bits))
+    val uart_rx_states = Reg(UartRxState())
     val uart_rx_baud_count = Reg(UInt(16 bits))
     val uart_rx_bit_count = Reg(UInt(3 bits))
     when(reset) {
-      uart_rx_states := 0; uart_rx_baud_count := 0; uart_rx_bit_count := 0; uart_rx_byte_valid := False; uart_rx_byte := 0
+      uart_rx_states := UartRxState.IDLE; uart_rx_baud_count := 0; uart_rx_bit_count := 0; uart_rx_byte_valid := False; uart_rx_byte := 0
     }.otherwise {
       uart_rx_byte_valid := False
       when(!uart_control_reg(0) || !uart_control_reg(2) || uart_baud_reg === 0) {
-        uart_rx_states := 0; uart_rx_baud_count := 0; uart_rx_bit_count := 0; uart_rx_byte := 0
+        uart_rx_states := UartRxState.IDLE; uart_rx_baud_count := 0; uart_rx_bit_count := 0; uart_rx_byte := 0
       }.otherwise {
         switch(uart_rx_states) {
-          is(0) { when(!uart_rx_stable) { uart_rx_states := 1 } }
-          is(1) {
+          is(UartRxState.IDLE) { when(!uart_rx_stable) { uart_rx_states := UartRxState.START_BIT } }
+          is(UartRxState.START_BIT) {
             when(!uart_rx_stable) {
-              when(uart_rx_baud_count.resize(32) === (uart_baud_reg |>> 1) - 1) { uart_rx_states := 2; uart_rx_baud_count := 0 }
+              when(uart_rx_baud_count.resize(32) === (uart_baud_reg |>> 1) - 1) { uart_rx_states := UartRxState.DATA_BITS; uart_rx_baud_count := 0 }
               .otherwise { uart_rx_baud_count := uart_rx_baud_count + 1 }
-            }.otherwise { uart_rx_states := 0; uart_rx_baud_count := 0 }
+            }.otherwise { uart_rx_states := UartRxState.IDLE; uart_rx_baud_count := 0 }
           }
-          is(2) {
+          is(UartRxState.DATA_BITS) {
             uart_rx_baud_count := uart_rx_baud_count + 1
             when(uart_rx_baud_count.resize(32) === uart_baud_reg - 1) {
               uart_rx_baud_count := 0
               uart_rx_byte := (uart_rx_stable ## uart_rx_byte(7 downto 1)).asUInt
               uart_rx_bit_count := uart_rx_bit_count + 1
-              when(uart_rx_bit_count === 7) { uart_rx_states := 3; uart_rx_bit_count := 0 }
+              when(uart_rx_bit_count === 7) { uart_rx_states := UartRxState.STOP_BIT; uart_rx_bit_count := 0 }
             }
           }
-          is(3) {
+          is(UartRxState.STOP_BIT) {
             uart_rx_baud_count := uart_rx_baud_count + 1
             when(uart_rx_baud_count.resize(32) === uart_baud_reg - 1) {
               uart_rx_baud_count := 0
-              uart_rx_states := 0
+              uart_rx_states := UartRxState.IDLE
               when(uart_rx_stable) { uart_rx_byte_valid := True }
             }
           }

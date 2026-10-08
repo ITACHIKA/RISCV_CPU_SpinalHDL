@@ -15,14 +15,14 @@ class control_flow_resolver_ex extends Component {
     val branch_taken = in(Bool())
     val alu_result = in(UInt(32 bits))
     val imm = in(UInt(32 bits))
-    val pc_sel = in(UInt(3 bits))
+    val pc_sel = in(PcSel())
     val valid_ex = in(Bool())
     // Outputs
     val redirect_pc_request = out(Bool())
     val redirect_next_pc = out(UInt(32 bits))
     val btb_target_pc = out(UInt(32 bits))
     val btb_update_valid = out(Bool())
-    val btb_update_type = out(UInt(2 bits))
+    val btb_update_type = out(BranchPredictType())
     val btb_actual_taken = out(Bool())
   }
   noIoPrefix()
@@ -30,28 +30,28 @@ class control_flow_resolver_ex extends Component {
   redirect_next_pc := current_pc + 4
   redirect_pc_request := False
   btb_update_valid := False
-  btb_update_type := BP_NONE
+  btb_update_type := BranchPredictType.NONE
   btb_target_pc := 0
   btb_actual_taken := False
   // Preserve direction-only recovery and unconditional JALR recovery.
   switch(pc_sel) {
-    is(PC_BRANCH) {
+    is(PcSel.BRANCH) {
       redirect_next_pc := Mux(branch_taken, current_pc + imm, current_pc + 4)
       redirect_pc_request := valid_ex && (branch_taken =/= predicted_taken)
       btb_update_valid := True
-      btb_update_type := BP_CONDITIONAL
+      btb_update_type := BranchPredictType.CONDITIONAL
       btb_target_pc := current_pc + imm
       btb_actual_taken := branch_taken
     }
-    is(PC_JAL) {
+    is(PcSel.JAL) {
       redirect_next_pc := alu_result
       redirect_pc_request := valid_ex && !predicted_taken
       btb_update_valid := True
-      btb_update_type := BP_JAL
+      btb_update_type := BranchPredictType.JAL
       btb_target_pc := alu_result
       btb_actual_taken := True
     }
-    is(PC_JALR) { redirect_next_pc := alu_result & U(0xfffffffeL,32 bits); redirect_pc_request := valid_ex }
-    is(PC_TRAP) { redirect_next_pc := 0; redirect_pc_request := valid_ex && !predicted_taken }
+    is(PcSel.JALR) { redirect_next_pc := alu_result & U(0xfffffffeL,32 bits); redirect_pc_request := valid_ex }
+    is(PcSel.TRAP) { redirect_next_pc := 0; redirect_pc_request := valid_ex && !predicted_taken }
   }
 }
